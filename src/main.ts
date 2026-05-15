@@ -5,6 +5,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
-  await app.listen(process.env.PORT ?? 3001);
+  const port = process.env.PORT || 3001; 
+  
+  // Важливо: слухати на '0.0.0.0', щоб сервер був доступний ззовні
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
