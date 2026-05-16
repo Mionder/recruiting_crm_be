@@ -32,7 +32,7 @@ export class CandidatesService {
     const newCandidate = new this.candidateModel({
       ...candidateData,
       photoUrl,
-      vlkDocUrl,
+      vlkUrl: vlkDocUrl,
       // конвертуємо категорії з рядка (якщо прийшли через FormData) у масив
       categories: typeof candidateData.categories === 'string' 
         ? candidateData.categories.split(',') 
