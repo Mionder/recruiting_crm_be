@@ -4,6 +4,7 @@ import { CandidatesController } from './candidates.controller';
 import { CandidatesService } from './candidates.service';
 import { Candidate, CandidateSchema } from './schemas/candidate.schema';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { WhatsappModule } from 'src/whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
     ]),
     // Імпортуємо модуль для роботи з фото
     CloudinaryModule,
+    WhatsappModule,
   ],
   controllers: [CandidatesController],
   providers: [CandidatesService],

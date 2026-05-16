@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CandidatesModule } from './candidates/candidates.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AuthModule } from './auth/auth.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     CandidatesModule,
     CloudinaryModule,
+    WhatsappModule,
   ],
 })
 export class AppModule {}

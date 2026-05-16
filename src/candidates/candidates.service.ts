@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Candidate } from './schemas/candidate.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { WhatsappService } from 'src/whatsapp/whatsapp.service';
 
 @Injectable()
 export class CandidatesService {
   constructor(
     @InjectModel(Candidate.name) private candidateModel: Model<Candidate>,
     private cloudinary: CloudinaryService,
+    private readonly whatsappService: WhatsappService,
   ) {}
 
   async create(candidateData: any, files: { photo?: Express.Multer.File[], vlk?: Express.Multer.File[] }) {
@@ -35,6 +37,10 @@ export class CandidatesService {
       categories: typeof candidateData.categories === 'string' 
         ? candidateData.categories.split(',') 
         : candidateData.categories,
+    });
+
+    this.whatsappService.sendCandidateNotification(newCandidate).catch(err => {
+      console.error('WhatsApp background error:', err);
     });
 
     return newCandidate.save();
