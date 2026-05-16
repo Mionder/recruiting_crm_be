@@ -49,9 +49,10 @@ export class WhatsappService {
                     `📞 *Телефон:* ${candidate.phone}\n` +
                     `📍 *Адреса:* ${candidate.address}\n` +
                     `🪪 *ІПН:* ${candidate.ipn}\n` +
-                    `🚗 *Категорії:* ${candidate.categories || 'Не wказано'}\n` +
-                    `🏥 *Здоров'я:* ${candidate.healthIssues || 'Без скарг'}\n` +
-                    `⚖️ *Судимість:* ${candidate.hasCriminal ? 'Є (' + candidate.criminalDetails + ')' : 'Відсутня'}`;
+                    `🚗 *Категорії:* ${candidate.categories || 'Не вказано'}\n` +
+                    `🏥 *Здоров'я:* ${candidate.healthIssues || 'Придатний, скарг немає'}\n` +
+                    `⚖️ *Судимість:* ${candidate.hasCriminal ? 'Є (' + candidate.criminalDetails + ')' : 'Відкритих або закритих кримінальних проваджень немає, під слідством не перебуває'} \n` +
+                    `*Деталі:* ${candidate.summary}`;
 
     try {
       // Відправляємо текст
@@ -72,12 +73,12 @@ export class WhatsappService {
       }
 
       // 3. Якщо є скан ВЛК, відправляємо його окремим зображенням/файлом
-      if (candidate.vlkUrl) {
+      if (candidate.vlkDocUrl) {
         const vlkParams = new URLSearchParams();
         vlkParams.append('From', this.fromNumber);
         vlkParams.append('To', this.targetNumber);
         vlkParams.append('Body', `📄 Довідка ВЛК: ${candidate.fullName}`);
-        vlkParams.append('MediaUrl', candidate.vlkUrl);
+        vlkParams.append('MediaUrl', candidate.vlkDocUrl);
         await this.sendTwilioRequest(vlkParams);
       }
 
