@@ -15,10 +15,10 @@ export class WhatsappService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.accountSid = this.configService.get<string>('TWILIO_ACCOUNT_SID');
-    this.authToken = this.configService.get<string>('TWILIO_AUTH_TOKEN');
-    this.fromNumber = this.configService.get<string>('TWILIO_WHATSAPP_FROM');
-    this.targetNumber = this.configService.get<string>('WHATSAPP_TARGET_PHONE');
+    this.accountSid = this.configService.get<string>('TWILIO_ACCOUNT_SID') || '';
+    this.authToken = this.configService.get<string>('TWILIO_AUTH_TOKEN') || '';
+    this.fromNumber = this.configService.get<string>('TWILIO_WHATSAPP_FROM') || '';
+    this.targetNumber = this.configService.get<string>('WHATSAPP_TARGET_PHONE') || '';  
   }
 
   async sendCandidateNotification(candidate: any) {
@@ -60,7 +60,7 @@ export class WhatsappService {
         }),
       );
       this.logger.log(`Сповіщення про кандидата ${candidate.fullName} успішно відправлено у WhatsApp через Twilio.`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(
         'Помилка відправки повідомлення через Twilio:',
         error.response?.data || error.message,
