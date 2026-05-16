@@ -36,6 +36,37 @@ export class WhatsappService {
     );
   }
 
+  formatDate = (dateString: string | undefined): string => {
+    if (!dateString) return 'Не вказано';
+    
+    // Розбиваємо рядок за дефісом
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return dateString; // Повертаємо як є, якщо формат не YYYY-MM-DD
+
+    const [year, month, day] = parts;
+    return `${day}.${month}.${year}`;
+  };
+
+  calculateAge = (dateString: string | undefined): number | string => {
+    if (!dateString) return '';
+
+    const birthDate = new Date(dateString);
+    if (isNaN(birthDate.getTime())) return ''; // Перевірка на валідність дати
+
+    const today = new Date();
+    
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    // Якщо поточний місяць менший за місяць народження, 
+    // або місяці однакові, але поточний день менший за день народження — повний рік ще не настав
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
   async sendCandidateNotification(candidate: any) {
     if (!this.accountSid || !this.authToken || !this.targetNumber || !this.fromNumber) {
       this.logger.warn('Twilio WhatsApp інтеграція не налаштована. Перевірте .env.');
@@ -43,16 +74,20 @@ export class WhatsappService {
     }
 
     // 1. Формуємо та відправляємо основний текст анкети (вже без посилань внизу)
-    const message = `*Новий кандидат у CRM!* 🚀\n\n` +
-                    `В/Ч A1619\n` +
+    const message =
+                    `*В/Ч A1619*\n\n` +
                     `👤 *ПІБ:* ${candidate.fullName}\n` +
+                    `*Дата народження:* ${this.formatDate(candidate.birthDate)}\n` +
+                    `*Повних років:* ${this.calculateAge(candidate.birthDate)}\n` +
                     `📞 *Телефон:* ${candidate.phone}\n` +
                     `📍 *Адреса:* ${candidate.address}\n` +
                     `🪪 *ІПН:* ${candidate.ipn}\n` +
+                    `*Освіта:* ${candidate.education}\n` +
+                    `*Працював:* ${candidate.experience}\n` +
                     `🚗 *Категорії:* ${candidate.categories || 'Не вказано'}\n` +
                     `🏥 *Здоров'я:* ${candidate.healthIssues || 'Придатний, скарг немає'}\n` +
-                    `⚖️ *Судимість:* ${candidate.hasCriminal ? 'Є (' + candidate.criminalDetails + ')' : 'Відкритих або закритих кримінальних проваджень немає, під слідством не перебуває'} \n` +
-                    `*Деталі:* ${candidate.summary}`;
+                    `⚖️ *Судимість:* ${candidate.hasCriminal ? 'Є (' + candidate.criminalDetails + ')' : 'Відкритих або закритих кримінальних проваджень немає, під слідством не перебуває'} \n\n` +
+                    `*Деталі:* ${candidate.summary || '-'}`;
 
     try {
       // Відправляємо текст
